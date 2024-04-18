@@ -1,6 +1,6 @@
 # Subdomain Fetcher
 
-A Python script that passively fetch subdomains from APIs. Inspired from [assetfinder](https://github.com/tomnomnom/assetfinder).
+A Python script that passively fetch subdomains from APIs. Inspired by Tomnomnom's [assetfinder](https://github.com/tomnomnom/assetfinder).
 
 ## Usage
 
@@ -31,5 +31,5 @@ options:
 - AlienVault
 - VirusTotal
     - Note: Require `VIRUSTOTAL_API_KEY` in `.env` file
-    - It is recommended because VT fetch more results that other sources.
+    - It is recommended because VT fetch more results than other sources.
     - [Link to get API key](https://www.virustotal.com/gui/my-apikey)
