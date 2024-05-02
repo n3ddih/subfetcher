@@ -127,13 +127,11 @@ def fetchVirusTotal(target) -> list[str]:
         subdomains.add(subdomain.get('id'))
     return list(subdomains)
 
-def fetch_all_subdomains(domain, *, thread: int=10, proxies: dict=None) -> list[str]:
+def fetch_all_subdomains(domain, *, thread: int=10, proxy: str=None) -> list[str]:
 
-    if proxies:
-        http_proxy = args.proxy
+    if proxy:
         proxies = {"http": http_proxy, "https": http_proxy}
         session.proxies.update(proxies)
-        session.verify = False
 
     all_subdomains = []
 
@@ -172,7 +170,7 @@ def main() -> None:
     target: str = args.domain
     thread: int = args.thread
     http_proxy: str = args.proxy
-    subdomains = fetch_all_subdomains(target, thread=thread, proxies=http_proxy)
+    subdomains = fetch_all_subdomains(target, thread=thread, proxy=http_proxy)
     
     print(f'*** Combined subdomains for {target} ({len(subdomains)} results):')
     for sub in subdomains:
