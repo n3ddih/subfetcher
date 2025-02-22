@@ -13,6 +13,12 @@ load_dotenv()
 
 session = requests.Session()
 session.verify = False
+session.headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; pl; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB7.1 ( .NET CLR 3.5.30729',
+    'Referer': 'https://www.google.co.uk/',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Cache-Control': 'no-cache'
+}
 
 """
 For external usage:
@@ -171,11 +177,11 @@ def main() -> None:
     thread: int = args.thread
     http_proxy: str = args.proxy
     subdomains = fetch_all_subdomains(target, thread=thread, proxy=http_proxy)
-    
+
     print(f'*** Combined subdomains for {target} ({len(subdomains)} results):')
     for sub in subdomains:
         print(sub)
-    
+
     if args.output:
         with open(args.output, 'w') as f:
             f.write('\n'.join(subdomains))
