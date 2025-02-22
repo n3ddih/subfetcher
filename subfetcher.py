@@ -112,7 +112,7 @@ def fetchVirusTotal(target) -> list[str]:
     if api_key is None or len(api_key) == 0:
         print("[!] No VirusTotal API key found!")
         return []
-    url = f"https://www.virustotal.com/api/v3/domains/{target}/subdomains?limit=1000"
+    url = f"https://www.virustotal.com/api/v3/domains/{target}/subdomains?limit=40"
     headers = {
         "accept": "application/json",
         "x-apikey": api_key
@@ -130,7 +130,7 @@ def fetchVirusTotal(target) -> list[str]:
 def fetch_all_subdomains(domain, *, thread: int=10, proxy: str=None) -> list[str]:
 
     if proxy:
-        proxies = {"http": http_proxy, "https": http_proxy}
+        proxies = {"http": proxy, "https": proxy}
         session.proxies.update(proxies)
 
     all_subdomains = []
