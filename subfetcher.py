@@ -159,6 +159,25 @@ def fetchVirusTotal(target) -> list[str]:
         subdomains.add(subdomain.get('id'))
     return list(subdomains)
 
+def fetchSecurityTrails(target) -> list[str]:
+    api_key = os.environ.get('SECURITYTRAILS_API_KEY')
+    if api_key is None or len(api_key) == 0:
+        print("[!] No SecurityTrails API key found!")
+        return []
+    url = f"https://api.securitytrails.com/v1/domain/frt.vn/subdomains?apikey={api_key}"
+    headers = {
+        "accept": "application/json"
+    }
+    output = get_api_data(url, headers=headers)
+    if output is None:
+        print("[!] Failed to retrieve data from SecurityTrails API!")
+        return []
+    subdomains = set()
+    for subdomain in output.get('subdomains', []):
+        full_subdomain = f"{subdomain}.{target}"
+        subdomains.add(full_subdomain)
+    return list(subdomains)
+
 def fetch_all_subdomains(domain, *, thread: int=10, proxy: str=None) -> list[str]:
 
     if proxy:
@@ -179,7 +198,8 @@ def fetch_all_subdomains(domain, *, thread: int=10, proxy: str=None) -> list[str
         fetchUrlScan,
         fetchAlienVault,
         fetchShodan,
-        fetchVirusTotal
+        fetchVirusTotal,
+        fetchSecurityTrails
     ]
 
     with ThreadPoolExecutor(max_workers=thread) as executor:
