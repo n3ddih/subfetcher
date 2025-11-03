@@ -1,10 +1,9 @@
 import requests
-import json
 import argparse
-import sys
 from concurrent.futures import ThreadPoolExecutor
 import os
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 # Disable SSL warnings
 requests.packages.urllib3.disable_warnings()
@@ -35,6 +34,16 @@ def get_api_data(url, headers=None):
         if response.status_code != 200:
             return None
         return response.json() if 'application/json' in response.headers.get('Content-Type') else response.text
+    except requests.RequestException as e:
+        print(f'An error occurred: {e}')
+        return None
+
+def get_html(url):
+    try:
+        response = session.get(url)
+        if response.status_code != 200:
+            return None
+        return response.content
     except requests.RequestException as e:
         print(f'An error occurred: {e}')
         return None
@@ -113,6 +122,23 @@ def fetchAlienVault(target) -> list[str]:
             subdomains.add(hostname)
     return list(subdomains)
 
+def fetchShodan(target) -> list[str]:
+    url = 'https://www.shodan.io/domain/' + target
+    response = get_html(url)
+    if response is None:
+        print("[!] Failed to retrieve data from Shodan!")
+        return []
+    soup = BeautifulSoup(response, 'html.parser')
+
+    subdomains_html = soup.find("ul", id="subdomains")
+    if not subdomains_html:
+        print("[!] No data from Shodan!")
+        return []
+    
+    names = [li.get_text(strip=True) for li in subdomains_html.find_all("li")]
+    subdomains = [f"{name}.{target}" for name in names]
+    return subdomains
+
 def fetchVirusTotal(target) -> list[str]:
     api_key = os.environ.get('VIRUSTOTAL_API_KEY')
     if api_key is None or len(api_key) == 0:
@@ -152,6 +178,7 @@ def fetch_all_subdomains(domain, *, thread: int=10, proxy: str=None) -> list[str
         fetchThreatCrowd,
         fetchUrlScan,
         fetchAlienVault,
+        fetchShodan,
         fetchVirusTotal
     ]
 
@@ -178,7 +205,7 @@ def main() -> None:
     http_proxy: str = args.proxy
     subdomains = fetch_all_subdomains(target, thread=thread, proxy=http_proxy)
 
-    print(f'*** Combined subdomains for {target} ({len(subdomains)} results):')
+    print(f'### Combined subdomains for {target} ({len(subdomains)} results):')
     for sub in subdomains:
         print(sub)
 

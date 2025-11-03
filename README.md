@@ -30,6 +30,7 @@ options:
 - UrlScan
 - AlienVault
 - VirusTotal
-    - Note: Require `VIRUSTOTAL_API_KEY` in `.env` file
-    - It is recommended because VT fetch more results than other sources.
-    - [Link to get API key](https://www.virustotal.com/gui/my-apikey)
+    - Note: `VIRUSTOTAL_API_KEY` in `.env` file is required.
+    - Recommended - VT fetches more results than other sources.
+    - However, the current version 3 has the limitation of 40 domains.
+    - [Get API key here](https://www.virustotal.com/gui/my-apikey).
